@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f6e56">
+<title>JP Smart – Sales Dashboard</title>
+<style>
+:root{--bg:#f4f3ee;--fg:#1f2421;--mu:#5f6862;--card:#fff;--ln:#dfddd5;--ac:#0f6e56;--acf:#e1f3ec;--wn:#b4400f;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#141816;--fg:#eceae3;--mu:#a2aaa4;--card:#1e2320;--ln:#323935;--ac:#5dcaa5;--acf:#1b3a30;--wn:#f0997b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+.w{max-width:720px;margin:0 auto;padding:14px}
+h1{font-size:20px;margin:2px 0 0}h2{font-size:16px;margin:16px 0 6px}
+.s{color:var(--mu);margin:2px 0 12px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:12px 14px;margin:8px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:10px 4px;text-align:center;font-size:12px;color:var(--mu)}
+.stat b{display:block;font-size:24px;color:var(--fg)}.stat.w2 b{color:var(--wn)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+input,select{flex:1 1 140px;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--ln);border-radius:10px;background:var(--card);color:var(--fg);font:inherit;font-size:16px}
+button{font:inherit;cursor:pointer}
+.btn{min-height:44px;padding:8px 16px;border-radius:10px;border:0;background:var(--ac);color:var(--bg);font-weight:600}
+.cp{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--ac);background:none;color:var(--ac);font-weight:600}
+.cp.x{border-color:var(--ln);color:var(--mu)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px}
+.chip{flex:0 0 auto;min-height:38px;padding:6px 14px;border-radius:999px;border:1px solid var(--ln);background:var(--card);color:var(--fg)}
+.chip.on{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.tag{display:inline-block;background:var(--acf);color:var(--ac);border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700;margin-right:6px}
+.msg{background:var(--acf);border-radius:10px;padding:10px 12px;margin:8px 0;white-space:pre-wrap;word-break:break-word}
+.mu{color:var(--mu);font-size:13px}.wn{color:var(--wn);font-weight:600}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+ul{margin:6px 0;padding-left:20px}li{margin:3px 0}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;background:var(--card);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:8px 2px 6px;font-size:11px}
+nav button span{display:block;font-size:20px;line-height:1.2}
+nav button.on{color:var(--ac);font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+</style></head><body>
+<div class="w"><h1>JP Smart Sales Dashboard</h1><p class="s" id="sub"></p><div id="main"></div></div>
+<nav id="nav"></nav><div class="toast" id="toast">Tersalin ✓</div>
+<script>
+/* ===== EDIT DI SINI: isi script. Variabel: {nama} {produk} {sales} {manfaat} ===== */
+var ST=[["Opening","H0"],["Follow-up 1","H+1"],["Follow-up 2","H+3"],["Follow-up 3","H+7"],["Follow-up 4","H+14"],["Closing","Saat ada sinyal beli"],["Pasca closing","H+1 setelah bayar"]];
+var DAYS=[0,1,3,7,14];
+var S={b2c:[
+"Halo Kak {nama}, saya {sales} dari JP Smart. Terima kasih sudah tertarik dengan {produk}. Boleh tahu kakak butuh ini untuk keperluan apa? Biar saya rekomendasikan yang paling pas.",
+"Hai Kak {nama}, {sales} dari JP Smart lagi. Manfaat utama {produk}: {manfaat}. Kalau mau, saya kirim contoh atau demo singkatnya. Mau?",
+"Kak {nama}, banyak pelanggan kami awalnya ragu, lalu puas setelah mencoba {produk}. Mau saya kirim testimoni dan info garansinya?",
+"Kak {nama}, ada penawaran khusus untuk {produk} minggu ini. Kalau berminat, saya bantu proses ordernya hari ini. Lanjut, Kak?",
+"Kak {nama}, saya tidak ingin mengganggu, jadi ini pesan terakhir saya soal {produk}. Kalau nanti butuh, tinggal balas chat ini ya. Terima kasih 🙏",
+"Siap Kak {nama}! Untuk order {produk}, mohon kirim: nama penerima, alamat lengkap, dan metode bayar (transfer atau QRIS). Setelah itu saya buatkan invoice.",
+"Terima kasih sudah order, Kak {nama}! Pesanan {produk} sedang kami proses. Kalau ada kendala saat pemakaian, langsung chat saya ya."],
+b2b:[
+"Selamat pagi Bapak/Ibu {nama}, saya {sales} dari JP Smart. Kami membantu perusahaan dengan {produk}. Boleh saya tahu siapa yang memegang keputusan ini, dan apa tantangan utama saat ini?",
+"Bapak/Ibu {nama}, menindaklanjuti pesan sebelumnya: {produk} membantu {manfaat}. Apakah ada waktu 15 menit minggu ini agar saya paparkan singkat?",
+"Bapak/Ibu {nama}, saya lampirkan studi kasus singkat dari klien sejenis yang memakai {produk}. Menurut Bapak/Ibu, apakah relevan dengan kondisi perusahaan saat ini?",
+"Bapak/Ibu {nama}, agar evaluasi lebih mudah, saya siapkan proposal dan estimasi biaya {produk}. Boleh saya kirim hari ini, atau perlu melibatkan pihak lain lebih dulu?",
+"Bapak/Ibu {nama}, saya pamit dulu agar tidak mengganggu. Jika prioritas berubah, silakan hubungi saya kapan saja. Terima kasih atas waktunya.",
+"Terima kasih Bapak/Ibu {nama}. Untuk melanjutkan kerja sama {produk}, saya kirimkan penawaran resmi dan draf kesepakatan. Mohon konfirmasi nama PIC dan data penagihan.",
+"Bapak/Ibu {nama}, kerja sama kita resmi dimulai. Saya jadwalkan kick-off dan onboarding {produk} minggu ini. Hari apa yang nyaman?"]};
+var OBJ=[["“Harganya mahal”","Saya paham, Kak {nama}. Boleh tahu pembanding atau budget yang kakak punya? Kalau sudah tahu, saya bisa tunjukkan paket yang paling sesuai atau cara agar nilainya terasa lebih besar dari harganya."],
+["“Saya pikir-pikir dulu”","Tentu, Kak {nama}. Supaya saya bisa bantu, bagian mana yang masih kakak pertimbangkan: fungsi, harga, atau waktu? Nanti saya jawab poin itu saja."],
+["“Sudah pakai yang lain”","Baik, terima kasih infonya. Apa yang paling kakak suka dan paling kurang dari yang sekarang dipakai? Siapa tahu {produk} bisa melengkapi, tanpa harus mengganti semuanya."],
+["“Perlu izin atasan” (B2B)","Wajar, Bapak/Ibu {nama}. Saya siapkan ringkasan satu halaman berisi manfaat, biaya, dan hasil klien lain agar mudah dipresentasikan. Boleh saya ikut hadir jika diperlukan?"],
+["“Kualitasnya meragukan”","Pertanyaan bagus, Kak {nama}. Saya kirim testimoni, garansi, dan bukti penggunaan {produk} ya. Kalau ada kekhawatiran spesifik, sebutkan saja supaya saya jawab langsung."]];
+var QK=[["Kirim info harga","Untuk {produk}, harganya [isi harga]. Sudah termasuk [isi]. Mau saya bantu hitung total sesuai kebutuhan Kakak?"],
+["Minta data order","Untuk memproses order {produk}, mohon kirim: nama penerima, nomor HP, dan alamat lengkap ya, Kak {nama}."],
+["Konfirmasi pembayaran","Pembayaran sudah kami terima, Kak {nama}. Terima kasih! Pesanan {produk} segera kami proses dan resi saya kirim setelah dikirim."],
+["Jadwalkan demo","Boleh, Kak {nama}. Demo {produk} bisa kami jadwalkan [hari/jam]. Hari dan jam mana yang paling nyaman?"],
+["Di luar jam kerja","Terima kasih sudah menghubungi JP Smart, Kak {nama}. Kami membalas di jam kerja [isi jam]. Pesan Kakak sudah kami catat."],
+["Rangkuman setelah ngobrol","Terima kasih sudah meluangkan waktu, Kak {nama}. Rangkumannya: {produk}, manfaat utama {manfaat}. Kabari saya kapan siap lanjut ya."],
+["Minta testimoni","Kak {nama}, senang {produk} sudah dipakai. Boleh minta testimoni singkat atau foto penggunaannya? Sangat membantu kami, terima kasih 🙏"]];
+/* ===== akhir bagian edit ===== */
+var STS=[["aktif","Aktif"],["respon","Merespons"],["closing","Closing"],["won","Won"],["lost","Lost"]];
+var TABS=[["home","🏠","Beranda"],["script","💬","Script"],["obj","🛡️","Keberatan"],["quick","⚡","Cepat"],["guide","📖","Panduan"]];
+var DB={V:{nama:"",produk:"",sales:"",manfaat:""},leads:[]},tab="home",seg="b2c",stf=-1;
+function load(){try{var s=localStorage.getItem("jps");if(s){var o=JSON.parse(s);DB.V=Object.assign(DB.V,o.V||{});DB.leads=o.leads||[]}}catch(e){}}
+function save(){try{localStorage.setItem("jps",JSON.stringify(DB))}catch(e){}}
+function p2(n){return n<10?"0"+n:""+n}
+function today(){var d=new Date();return d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())}
+function addDays(s,n){return new Date(Date.parse(s)+n*864e5).toISOString().slice(0,10)}
+function diff(a,b){return Math.round((Date.parse(a)-Date.parse(b))/864e5)}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function fill(t){return t.replace(/\{(\w+)\}/g,function(m,k){return DB.V[k]?DB.V[k]:"["+k+"]"})}
+function info(l){if(l.st!="aktif")return{t:(STS.filter(function(x){return x[0]==l.st})[0]||[0,""])[1],d:99};
+var n=l.sent+1;if(n>=CAD.length)return{t:"Cadence selesai, pindah ke nurturing",d:98};
+var d=diff(addDays(l.start,CAD[n].d),today());
+return{t:CAD[n].n+" · "+(d<0?"Terlambat "+(-d)+" hari":d==0?"Hari ini":"dalam "+d+" hari"),d:d,n:n}}
+function stats(){var a=0,t=0,L=0;DB.leads.forEach(function(l){if(l.st=="aktif"){a++;var i=info(l);if(i.d==0)t++;if(i.d<0)L++}});
+return '<div class="stats"><div class="stat"><b>'+a+'</b>Lead aktif</div><div class="stat"><b>'+t+'</b>Follow-up hari ini</div><div class="stat w2"><b>'+L+'</b>Terlambat</div></div>'}
+function vars(){return '<div class="card"><div class="mu">Isi sekali, semua script ikut berubah (tersimpan di HP ini)</div><div class="row">'+[["nama","Nama customer"],["produk","Produk / layanan"],["sales","Nama sales"],["manfaat","Manfaat utama"]].map(function(f){return '<input data-v="'+f[0]+'" placeholder="'+f[1]+'" value="'+esc(DB.V[f[0]])+'">'}).join("")+'</div></div>'}
+function card(g,i,title,sub,txt){var id=g+i;return '<div class="card"><div class="top"><b>'+title+'</b>'+(sub?'<span class="tag">'+sub+'</span>':'')+'</div><div class="msg" id="m'+id+'" data-g="'+g+'" data-i="'+i+'">'+esc(fill(txt))+'</div><button class="btn" data-c="'+id+'">Salin</button></div>'}
+function home(){var ls=DB.leads.slice().sort(function(a,b){return info(a).d-info(b).d});
+return stats()+'<h2>Tambah lead</h2><div class="card"><div class="row" style="margin-top:0"><input id="ln" placeholder="Nama customer / perusahaan"><select id="ls"><option value="b2c">B2C</option><option value="b2b">B2B</option></select><button class="btn" data-a="add">Tambah</button></div></div><h2>Daftar follow-up</h2>'+
+(ls.length?ls.map(function(l){var i=info(l);return '<div class="card"><div class="top"><b>'+esc(l.nama)+'</b><span class="tag">'+l.seg.toUpperCase()+'</span></div><div class="'+(i.d<0?"wn":"mu")+'">'+i.t+'</div><div class="row">'+(l.st=="aktif"&&i.n!==undefined?'<button class="cp" data-a="use" data-id="'+l.id+'">Buka script</button><button class="cp" data-a="send" data-id="'+l.id+'">Terkirim ✓</button>':'')+'<select data-a="status" data-id="'+l.id+'" style="flex:0 1 120px">'+STS.map(function(x){return '<option value="'+x[0]+'"'+(x[0]==l.st?" selected":"")+'>'+x[1]+'</option>'}).join("")+'</select><button class="cp x" data-a="del" data-id="'+l.id+'">Hapus</button></div></div>'}).join(""):'<p class="mu">Belum ada lead. Tambahkan di atas, jadwal follow-up akan dihitung otomatis.</p>')}
+function script(){return vars()+'<div class="row" style="margin:0"><button class="chip '+(seg=="b2c"?"on":"")+'" data-s="b2c">B2C (personal)</button><button class="chip '+(seg=="b2b"?"on":"")+'" data-s="b2b">B2B (perusahaan)</button></div><div class="chips"><button class="chip '+(stf<0?"on":"")+'" data-f="-1">Semua</button>'+ST.map(function(s,i){return '<button class="chip '+(stf==i?"on":"")+'" data-f="'+i+'">'+s[0]+'</button>'}).join("")+'</div>'+
+ST.map(function(s,i){return (stf<0||stf==i)?ITEMS.map(function(it,k){return it.g=="s"&&it.st===i&&(it.seg==seg||it.seg=="all")?card("i",k,it.t||s[0],s[1],it.x):""}).join(""):""}).join("")}
+function obj(){return vars()+ITEMS.map(function(it,k){return it.g=="o"?card("i",k,it.t,"",it.x):""}).join("")}
+function quick(){return vars()+ITEMS.map(function(it,k){return it.g=="q"?card("i",k,it.t,"",it.x):""}).join("")}
+function guide(){return '<div class="card"><b>Cara pakai</b><ul><li>Tambah lead di Beranda. Jadwal follow-up dihitung otomatis.</li><li>Tekan Buka script, salin, tempel ke WhatsApp.</li><li>Setelah terkirim, tekan Terkirim ✓. Jika customer membalas, ubah status ke Merespons.</li></ul></div>'+
+'<div class="card"><b>Jadwal follow-up</b><ul>'+CAD.map(function(c){return '<li><b>H'+(c.d?'+'+c.d:'0')+'</b> – '+c.n+'</li>'}).join("")+'</ul></div>'+
+'<div class="card"><b>Aturan main</b><ul><li>Satu pesan, satu ajakan. Maksimal sekitar 45 kata.</li><li>Kirim jam 09–11 atau 15–17.</li><li>Tiap follow-up membawa hal baru, bukan sekadar menanyakan kabar.</li><li>Tanpa balasan setelah Follow-up 4: berhenti, masukkan ke nurturing bulanan.</li><li>Jika customer minta bicara dengan orang atau komplain, tangani langsung.</li></ul></div>'+
+'<p class="mu">Catatan: data lead tersimpan di browser masing-masing HP dan tidak tersinkron antar sales.</p>'}
+function draw(){document.getElementById("nav").innerHTML=TABS.map(function(t){return '<button class="'+(t[0]==tab?"on":"")+'" data-t="'+t[0]+'"><span>'+t[1]+'</span>'+t[2]+'</button>'}).join("");
+document.getElementById("sub").textContent=({home:"Pantau follow-up hari ini",script:"Script siap copy paste per tahap",obj:"Jawaban untuk keberatan customer",quick:"Balasan cepat sehari-hari",guide:"Panduan dan aturan main"})[tab];
+document.getElementById("main").innerHTML=({home:home,script:script,obj:obj,quick:quick,guide:guide})[tab]();window.scrollTo(0,0)}
+function src(g,i){return ITEMS[i].x}
+function toast(){var t=document.getElementById("toast");t.classList.add("on");setTimeout(function(){t.classList.remove("on")},1200)}
+function copy(id){var t=document.getElementById("m"+id).textContent;
+function fb(){try{var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();toast()}catch(e){}}
+try{navigator.clipboard.writeText(t).then(toast,fb)}catch(e){fb()}}
+function find(id){return DB.leads.filter(function(l){return String(l.id)==id})[0]}
+document.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var d=b.dataset;
+if(d.t){tab=d.t;draw()}else if(d.s){seg=d.s;draw()}else if(d.f){stf=+d.f;draw()}else if(d.c){copy(d.c)}
+else if(d.a=="add"){var n=document.getElementById("ln").value.trim();if(!n)return;DB.leads.push({id:Date.now()+""+Math.floor(Math.random()*999),nama:n,seg:document.getElementById("ls").value,st:"aktif",sent:-1,start:today()});save();draw()}
+else if(d.a=="send"){var l=find(d.id),i=info(l);if(l&&i.n!==undefined){if(i.n==0)l.start=today();l.sent=i.n;save();draw()}}
+else if(d.a=="use"){var l2=find(d.id),i2=info(l2);DB.V.nama=l2.nama;seg=l2.seg;stf=CAD[i2.n].si;save();tab="script";draw()}
+else if(d.a=="del"){var ok=true;try{ok=confirm("Hapus lead ini?")}catch(x){}if(ok){DB.leads=DB.leads.filter(function(l){return String(l.id)!=d.id});save();draw()}}});
+document.addEventListener("change",function(e){var t=e.target;if(t.dataset.a=="status"){var l=find(t.dataset.id);if(l){l.st=t.value;save();draw()}}});
+document.addEventListener("input",function(e){var k=e.target.dataset.v;if(!k)return;DB.V[k]=e.target.value;save();
+document.querySelectorAll(".msg").forEach(function(el){el.textContent=fill(src(el.dataset.g,+el.dataset.i))})});
+var ITEMS=[],CAD=[];
+function legacy(){var it=[];["b2c","b2b"].forEach(function(sg){S[sg].forEach(function(x,i){it.push({g:"s",seg:sg,st:i,t:ST[i][0],x:x})})});
+OBJ.forEach(function(o){it.push({g:"o",seg:"all",st:null,t:o[0],x:o[1]})});QK.forEach(function(o){it.push({g:"q",seg:"all",st:null,t:o[0],x:o[1]})});
+return{stages:ST.map(function(s,i){return{n:s[0],w:s[1],d:i<5?DAYS[i]:null}}),items:it}}
+function apply(D){ST=D.stages.map(function(s){return[s.n,s.w]});ITEMS=D.items;CAD=[];D.stages.forEach(function(s,i){if(s.d!==null&&s.d!==""&&s.d!==undefined)CAD.push({si:i,d:+s.d,n:s.n})})}
+fetch("scripts.json?v="+Date.now()).then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(j){apply(j&&j.stages&&j.items?j:legacy());load();draw()});
+</script></body></html>

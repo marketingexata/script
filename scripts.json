@@ -1,0 +1,224 @@
+{
+ "stages": [
+  {
+   "n": "Opening",
+   "w": "H0",
+   "d": 0
+  },
+  {
+   "n": "Follow-up 1",
+   "w": "H+1",
+   "d": 1
+  },
+  {
+   "n": "Follow-up 2",
+   "w": "H+3",
+   "d": 3
+  },
+  {
+   "n": "Follow-up 3",
+   "w": "H+7",
+   "d": 7
+  },
+  {
+   "n": "Follow-up 4",
+   "w": "H+14",
+   "d": 14
+  },
+  {
+   "n": "Closing",
+   "w": "Saat ada sinyal beli",
+   "d": null
+  },
+  {
+   "n": "Pasca closing",
+   "w": "H+1 setelah bayar",
+   "d": null
+  }
+ ],
+ "items": [
+  {
+   "g": "s",
+   "seg": "b2c",
+   "st": 0,
+   "t": "Opening",
+   "x": "Halo Kak {nama}, saya {sales} dari JP Smart. Terima kasih sudah tertarik dengan {produk}. Boleh tahu kakak butuh ini untuk keperluan apa? Biar saya rekomendasikan yang paling pas."
+  },
+  {
+   "g": "s",
+   "seg": "b2c",
+   "st": 1,
+   "t": "Follow-up 1",
+   "x": "Hai Kak {nama}, {sales} dari JP Smart lagi. Manfaat utama {produk}: {manfaat}. Kalau mau, saya kirim contoh atau demo singkatnya. Mau?"
+  },
+  {
+   "g": "s",
+   "seg": "b2c",
+   "st": 2,
+   "t": "Follow-up 2",
+   "x": "Kak {nama}, banyak pelanggan kami awalnya ragu, lalu puas setelah mencoba {produk}. Mau saya kirim testimoni dan info garansinya?"
+  },
+  {
+   "g": "s",
+   "seg": "b2c",
+   "st": 3,
+   "t": "Follow-up 3",
+   "x": "Kak {nama}, ada penawaran khusus untuk {produk} minggu ini. Kalau berminat, saya bantu proses ordernya hari ini. Lanjut, Kak?"
+  },
+  {
+   "g": "s",
+   "seg": "b2c",
+   "st": 4,
+   "t": "Follow-up 4",
+   "x": "Kak {nama}, saya tidak ingin mengganggu, jadi ini pesan terakhir saya soal {produk}. Kalau nanti butuh, tinggal balas chat ini ya. Terima kasih 🙏"
+  },
+  {
+   "g": "s",
+   "seg": "b2c",
+   "st": 5,
+   "t": "Closing",
+   "x": "Siap Kak {nama}! Untuk order {produk}, mohon kirim: nama penerima, alamat lengkap, dan metode bayar (transfer atau QRIS). Setelah itu saya buatkan invoice."
+  },
+  {
+   "g": "s",
+   "seg": "b2c",
+   "st": 6,
+   "t": "Pasca closing",
+   "x": "Terima kasih sudah order, Kak {nama}! Pesanan {produk} sedang kami proses. Kalau ada kendala saat pemakaian, langsung chat saya ya."
+  },
+  {
+   "g": "s",
+   "seg": "b2b",
+   "st": 0,
+   "t": "Opening",
+   "x": "Selamat pagi Bapak/Ibu {nama}, saya {sales} dari JP Smart. Kami membantu perusahaan dengan {produk}. Boleh saya tahu siapa yang memegang keputusan ini, dan apa tantangan utama saat ini?"
+  },
+  {
+   "g": "s",
+   "seg": "b2b",
+   "st": 1,
+   "t": "Follow-up 1",
+   "x": "Bapak/Ibu {nama}, menindaklanjuti pesan sebelumnya: {produk} membantu {manfaat}. Apakah ada waktu 15 menit minggu ini agar saya paparkan singkat?"
+  },
+  {
+   "g": "s",
+   "seg": "b2b",
+   "st": 2,
+   "t": "Follow-up 2",
+   "x": "Bapak/Ibu {nama}, saya lampirkan studi kasus singkat dari klien sejenis yang memakai {produk}. Menurut Bapak/Ibu, apakah relevan dengan kondisi perusahaan saat ini?"
+  },
+  {
+   "g": "s",
+   "seg": "b2b",
+   "st": 3,
+   "t": "Follow-up 3",
+   "x": "Bapak/Ibu {nama}, agar evaluasi lebih mudah, saya siapkan proposal dan estimasi biaya {produk}. Boleh saya kirim hari ini, atau perlu melibatkan pihak lain lebih dulu?"
+  },
+  {
+   "g": "s",
+   "seg": "b2b",
+   "st": 4,
+   "t": "Follow-up 4",
+   "x": "Bapak/Ibu {nama}, saya pamit dulu agar tidak mengganggu. Jika prioritas berubah, silakan hubungi saya kapan saja. Terima kasih atas waktunya."
+  },
+  {
+   "g": "s",
+   "seg": "b2b",
+   "st": 5,
+   "t": "Closing",
+   "x": "Terima kasih Bapak/Ibu {nama}. Untuk melanjutkan kerja sama {produk}, saya kirimkan penawaran resmi dan draf kesepakatan. Mohon konfirmasi nama PIC dan data penagihan."
+  },
+  {
+   "g": "s",
+   "seg": "b2b",
+   "st": 6,
+   "t": "Pasca closing",
+   "x": "Bapak/Ibu {nama}, kerja sama kita resmi dimulai. Saya jadwalkan kick-off dan onboarding {produk} minggu ini. Hari apa yang nyaman?"
+  },
+  {
+   "g": "o",
+   "seg": "all",
+   "st": null,
+   "t": "“Harganya mahal”",
+   "x": "Saya paham, Kak {nama}. Boleh tahu pembanding atau budget yang kakak punya? Kalau sudah tahu, saya bisa tunjukkan paket yang paling sesuai atau cara agar nilainya terasa lebih besar dari harganya."
+  },
+  {
+   "g": "o",
+   "seg": "all",
+   "st": null,
+   "t": "“Saya pikir-pikir dulu”",
+   "x": "Tentu, Kak {nama}. Supaya saya bisa bantu, bagian mana yang masih kakak pertimbangkan: fungsi, harga, atau waktu? Nanti saya jawab poin itu saja."
+  },
+  {
+   "g": "o",
+   "seg": "all",
+   "st": null,
+   "t": "“Sudah pakai yang lain”",
+   "x": "Baik, terima kasih infonya. Apa yang paling kakak suka dan paling kurang dari yang sekarang dipakai? Siapa tahu {produk} bisa melengkapi, tanpa harus mengganti semuanya."
+  },
+  {
+   "g": "o",
+   "seg": "all",
+   "st": null,
+   "t": "“Perlu izin atasan” (B2B)",
+   "x": "Wajar, Bapak/Ibu {nama}. Saya siapkan ringkasan satu halaman berisi manfaat, biaya, dan hasil klien lain agar mudah dipresentasikan. Boleh saya ikut hadir jika diperlukan?"
+  },
+  {
+   "g": "o",
+   "seg": "all",
+   "st": null,
+   "t": "“Kualitasnya meragukan”",
+   "x": "Pertanyaan bagus, Kak {nama}. Saya kirim testimoni, garansi, dan bukti penggunaan {produk} ya. Kalau ada kekhawatiran spesifik, sebutkan saja supaya saya jawab langsung."
+  },
+  {
+   "g": "q",
+   "seg": "all",
+   "st": null,
+   "t": "Kirim info harga",
+   "x": "Untuk {produk}, harganya [isi harga]. Sudah termasuk [isi]. Mau saya bantu hitung total sesuai kebutuhan Kakak?"
+  },
+  {
+   "g": "q",
+   "seg": "all",
+   "st": null,
+   "t": "Minta data order",
+   "x": "Untuk memproses order {produk}, mohon kirim: nama penerima, nomor HP, dan alamat lengkap ya, Kak {nama}."
+  },
+  {
+   "g": "q",
+   "seg": "all",
+   "st": null,
+   "t": "Konfirmasi pembayaran",
+   "x": "Pembayaran sudah kami terima, Kak {nama}. Terima kasih! Pesanan {produk} segera kami proses dan resi saya kirim setelah dikirim."
+  },
+  {
+   "g": "q",
+   "seg": "all",
+   "st": null,
+   "t": "Jadwalkan demo",
+   "x": "Boleh, Kak {nama}. Demo {produk} bisa kami jadwalkan [hari/jam]. Hari dan jam mana yang paling nyaman?"
+  },
+  {
+   "g": "q",
+   "seg": "all",
+   "st": null,
+   "t": "Di luar jam kerja",
+   "x": "Terima kasih sudah menghubungi JP Smart, Kak {nama}. Kami membalas di jam kerja [isi jam]. Pesan Kakak sudah kami catat."
+  },
+  {
+   "g": "q",
+   "seg": "all",
+   "st": null,
+   "t": "Rangkuman setelah ngobrol",
+   "x": "Terima kasih sudah meluangkan waktu, Kak {nama}. Rangkumannya: {produk}, manfaat utama {manfaat}. Kabari saya kapan siap lanjut ya."
+  },
+  {
+   "g": "q",
+   "seg": "all",
+   "st": null,
+   "t": "Minta testimoni",
+   "x": "Kak {nama}, senang {produk} sudah dipakai. Boleh minta testimoni singkat atau foto penggunaannya? Sangat membantu kami, terima kasih 🙏"
+  }
+ ],
+ "updated": "2026-10-20T08:34:26.908Z"
+}

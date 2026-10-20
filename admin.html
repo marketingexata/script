@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f6e56"><meta name="robots" content="noindex">
+<title>JP Smart – Master Script</title>
+<style>
+:root{--bg:#f4f3ee;--fg:#1f2421;--mu:#5f6862;--card:#fff;--ln:#dfddd5;--ac:#0f6e56;--acf:#e1f3ec;--wn:#b4400f;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#141816;--fg:#eceae3;--mu:#a2aaa4;--card:#1e2320;--ln:#323935;--ac:#5dcaa5;--acf:#1b3a30;--wn:#f0997b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+.w{max-width:760px;margin:0 auto;padding:14px}
+h1{font-size:20px;margin:2px 0 0}.s{margin:2px 0 12px;font-size:13px;color:var(--mu)}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:12px 14px;margin:8px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+input,select,textarea{flex:1 1 140px;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--ln);border-radius:10px;background:var(--card);color:var(--fg);font:inherit;font-size:16px}
+textarea{width:100%;min-height:104px;margin-top:8px;resize:vertical}
+button{font:inherit;cursor:pointer}
+.btn{min-height:44px;padding:8px 16px;border-radius:10px;border:0;background:var(--ac);color:var(--bg);font-weight:600}
+.cp{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--ac);background:none;color:var(--ac);font-weight:600}
+.cp.x{border-color:var(--ln);color:var(--mu)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px}
+.chip{flex:0 0 auto;min-height:38px;padding:6px 14px;border-radius:999px;border:1px solid var(--ln);background:var(--card);color:var(--fg)}
+.chip.on{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.mu{color:var(--mu);font-size:13px}.wn{color:var(--wn);font-weight:600}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;background:var(--card);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:8px 2px 6px;font-size:11px}
+nav button span{display:block;font-size:20px;line-height:1.2}
+nav button.on{color:var(--ac);font-weight:700}
+</style></head><body>
+<div class="w"><h1>JP Smart – Master Script</h1><p class="s" id="stt"></p><div id="main">Memuat…</div></div>
+<nav id="nav"></nav>
+<script>
+var D=null,tab="script",g="s",fs="all",dirty=false;
+var GL={s:"Funnel",o:"Keberatan",q:"Balasan cepat"};
+var TB=[["script","✍️","Script"],["stage","🧭","Tahap"],["pub","🚀","Publish"]];
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function stat(){document.getElementById("stt").innerHTML=dirty?'<span class="wn">● Draft belum dipublikasikan</span>':'Sinkron dengan versi terakhir'}
+function save(d){if(d!==false)dirty=true;try{localStorage.setItem("jpsA",JSON.stringify({D:D,dirty:dirty}))}catch(e){}stat()}
+function wc(x){var n=x.trim().split(/\s+/).filter(Boolean).length;return n+" kata"+(n>45?" · sebaiknya dipersingkat":"")}
+function msg(t){var m=document.getElementById("msg");if(m)m.textContent=t}
+function gh(){try{return Object.assign({repo:"",br:"main",token:""},JSON.parse(localStorage.getItem("jpsG")))}catch(e){return{repo:"",br:"main",token:""}}}
+function opts(list,v){return list.map(function(o){return '<option value="'+o[0]+'"'+(String(o[0])==String(v)?" selected":"")+'>'+esc(o[1])+'</option>'}).join("")}
+function icard(it,i){var a=' data-i="'+i+'"';
+return '<div class="card"><input'+a+' data-f="t" value="'+esc(it.t)+'" placeholder="Judul script" style="width:100%">'+
+(it.g=="s"?'<div class="row"><select'+a+' data-f="seg">'+opts([["b2c","B2C"],["b2b","B2B"],["all","B2C & B2B"]],it.seg)+'</select><select'+a+' data-f="st">'+opts(D.stages.map(function(s,k){return[k,s.n]}),it.st)+'</select></div>':'')+
+'<textarea'+a+' data-f="x" placeholder="Isi pesan. Variabel: {nama} {produk} {sales} {manfaat}">'+esc(it.x)+'</textarea><div class="row"><span class="mu" id="wc'+i+'" style="flex:1">'+wc(it.x)+'</span><button class="cp"'+a+' data-a="dup">Duplikat</button><button class="cp x"'+a+' data-a="del">Hapus</button></div></div>'}
+function tScript(){var h='<div class="chips">'+Object.keys(GL).map(function(k){return '<button class="chip'+(g==k?" on":"")+'" data-g="'+k+'">'+GL[k]+'</button>'}).join("")+'</div>';
+if(g=="s")h+='<div class="chips">'+[["all","Semua"],["b2c","B2C"],["b2b","B2B"]].map(function(x){return '<button class="chip'+(fs==x[0]?" on":"")+'" data-fs="'+x[0]+'">'+x[1]+'</button>'}).join("")+'</div>';
+h+='<button class="btn" data-a="new" style="width:100%">+ Tambah script</button><p class="mu">Variabel yang dikenali dashboard sales: {nama} {produk} {sales} {manfaat}</p>';
+var ix=[];D.items.forEach(function(it,i){if(it.g==g&&(g!="s"||fs=="all"||it.seg==fs||it.seg=="all"))ix.push(i)});
+if(g=="s")ix.sort(function(a,b){return D.items[a].st-D.items[b].st||a-b});
+return h+(ix.length?ix.map(function(i){return icard(D.items[i],i)}).join(""):'<p class="mu">Belum ada script di kategori ini.</p>')}
+function tStage(){return '<p class="mu">Tahap yang diisi “hari” otomatis masuk jadwal follow-up (H+hari). Kosongkan untuk tahap tanpa jadwal, seperti Closing. Urutan tahap = urutan di dashboard sales.</p>'+D.stages.map(function(s,i){var a=' data-si="'+i+'"';
+return '<div class="card"><div class="row" style="margin-top:0"><input'+a+' data-f="n" value="'+esc(s.n)+'" placeholder="Nama tahap"><input'+a+' data-f="w" value="'+esc(s.w)+'" placeholder="Label (mis. H+1)"></div><div class="row"><input'+a+' data-f="d" type="number" min="0" inputmode="numeric" value="'+(s.d===null||s.d===undefined?"":s.d)+'" placeholder="Hari (kosong = tanpa jadwal)"><button class="cp x"'+a+' data-a="dst">Hapus</button></div></div>'}).join("")+'<button class="btn" data-a="nst" style="width:100%">+ Tambah tahap</button>'}
+function tPub(){var c=gh();return '<div class="card"><b>1. Publikasikan langsung ke GitHub</b><p class="mu">Isi sekali. Gunakan fine-grained token dengan izin Contents: Read and write, khusus untuk repo ini. Token hanya disimpan di browser ini.</p><div class="row"><input id="gr" placeholder="pemilik/nama-repo" value="'+esc(c.repo)+'"><input id="gb" placeholder="Branch" value="'+esc(c.br)+'"></div><div class="row"><input id="gt" type="password" placeholder="Token GitHub" value="'+esc(c.token)+'"></div><div class="row"><button class="btn" data-a="pub">Publikasikan</button></div></div>'+
+'<div class="card"><b>2. Atau unduh manual</b><p class="mu">Unduh scripts.json, lalu upload ke repo GitHub dan timpa file lama.</p><button class="cp" data-a="dl">Unduh scripts.json</button></div>'+
+'<div class="card"><b>Impor / muat ulang</b><div class="row" style="margin-top:0"><input id="imp" type="file" accept=".json"><button class="cp" data-a="live">Muat dari situs</button></div><p class="mu">“Muat dari situs” membuang draf dan mengambil scripts.json yang sedang live.</p></div><div id="msg" class="mu"></div>'}
+function draw(top){document.getElementById("nav").innerHTML=TB.map(function(t){return '<button class="'+(t[0]==tab?"on":"")+'" data-t="'+t[0]+'"><span>'+t[1]+'</span>'+t[2]+'</button>'}).join("");
+document.getElementById("main").innerHTML=({script:tScript,stage:tStage,pub:tPub})[tab]();stat();if(top)window.scrollTo(0,0)}
+function out(){return JSON.stringify({stages:D.stages,items:D.items.filter(function(it){return it.x.trim()}),updated:new Date().toISOString()},null,1)}
+function valid(j){return j&&Array.isArray(j.stages)&&Array.isArray(j.items)}
+function ask(t){try{return confirm(t)}catch(e){return true}}
+function dl(){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([out()],{type:"application/json"}));a.download="scripts.json";document.body.appendChild(a);a.click();a.remove();msg("scripts.json terunduh. Upload ke repo GitHub untuk memperbarui dashboard sales.")}
+function live(){fetch("scripts.json?v="+Date.now()).then(function(r){return r.json()}).then(function(j){if(!valid(j))throw 0;D=j;dirty=false;save(false);draw();msg("Draf diganti dengan versi live.")}).catch(function(){msg("Gagal memuat scripts.json dari situs.")})}
+async function pub(){var c={repo:document.getElementById("gr").value.trim(),br:document.getElementById("gb").value.trim()||"main",token:document.getElementById("gt").value.trim()};
+if(!c.repo||!c.token){msg("Isi repo dan token terlebih dulu.");return}
+try{localStorage.setItem("jpsG",JSON.stringify(c))}catch(e){}
+msg("Memproses…");var url="https://api.github.com/repos/"+c.repo+"/contents/scripts.json",H={Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json"};
+try{var sha,r=await fetch(url+"?ref="+encodeURIComponent(c.br),{headers:H});
+if(r.ok)sha=(await r.json()).sha;else if(r.status!=404){msg("Gagal membaca repo ("+r.status+"). Cek nama repo, branch, dan token.");return}
+var b={message:"Update script via master dashboard",content:btoa(unescape(encodeURIComponent(out()))),branch:c.br};if(sha)b.sha=sha;
+var w=await fetch(url,{method:"PUT",headers:Object.assign({"Content-Type":"application/json"},H),body:JSON.stringify(b)});
+if(w.ok){dirty=false;save(false);msg("Berhasil dipublikasikan. Dashboard sales akan menampilkan versi baru dalam 1–2 menit.")}else msg("Gagal menulis ("+w.status+"). Pastikan token punya izin Contents: Read and write.")}
+catch(e){msg("Gagal terhubung ke GitHub. Periksa koneksi internet.")}}
+document.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var d=b.dataset,i=+d.i,si=+d.si;
+if(d.t){tab=d.t;draw(1)}else if(d.g){g=d.g;draw()}else if(d.fs){fs=d.fs;draw()}
+else if(d.a=="new"){D.items.push({g:g,seg:g=="s"?(fs=="all"?"b2c":fs):"all",st:g=="s"?0:null,t:"",x:""});save();draw();window.scrollTo(0,document.body.scrollHeight)}
+else if(d.a=="dup"){var c=JSON.parse(JSON.stringify(D.items[i]));c.t=(c.t||"")+" (salinan)";D.items.push(c);save();draw()}
+else if(d.a=="del"){if(ask("Hapus script ini?")){D.items.splice(i,1);save();draw()}}
+else if(d.a=="nst"){D.stages.push({n:"Tahap baru",w:"",d:null});save();draw()}
+else if(d.a=="dst"){var n=D.items.filter(function(it){return it.st===si}).length;if(ask("Hapus tahap ini"+(n?" beserta "+n+" script di dalamnya":"")+"?")){D.items=D.items.filter(function(it){return it.st!==si});D.items.forEach(function(it){if(it.st>si)it.st--});D.stages.splice(si,1);save();draw()}}
+else if(d.a=="dl")dl();else if(d.a=="live")live();else if(d.a=="pub")pub()});
+document.addEventListener("input",function(e){var t=e.target,f=t.dataset.f;if(!f||t.tagName=="SELECT")return;
+if(t.dataset.i!==undefined){var i=+t.dataset.i;D.items[i][f]=t.value;if(f=="x"){var w=document.getElementById("wc"+i);if(w)w.textContent=wc(t.value)}}
+else if(t.dataset.si!==undefined){D.stages[+t.dataset.si][f]=f=="d"?(t.value===""?null:+t.value):t.value}
+save()});
+document.addEventListener("change",function(e){var t=e.target,f=t.dataset.f;
+if(t.tagName=="SELECT"&&f&&t.dataset.i!==undefined){D.items[+t.dataset.i][f]=f=="st"?+t.value:t.value;save();draw()}
+else if(t.id=="imp"&&t.files[0]){var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(!valid(j))throw 0;D=j;save();draw();msg("File diimpor sebagai draf.")}catch(x){msg("File tidak valid.")}};r.readAsText(t.files[0])}});
+(function(){try{var s=JSON.parse(localStorage.getItem("jpsA"));if(s&&valid(s.D)){D=s.D;dirty=!!s.dirty;return draw(1)}}catch(e){}
+fetch("scripts.json?v="+Date.now()).then(function(r){return r.json()}).then(function(j){if(!valid(j))throw 0;D=j}).catch(function(){D={stages:[{n:"Opening",w:"H0",d:0}],items:[]}}).then(function(){draw(1)})})();
+</script></body></html>
